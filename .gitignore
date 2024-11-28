@@ -1,0 +1,7 @@
+*.egg-info/
+*cache*
+env/
+.DS_Store
+.vscode/
+dev/
+sandbox.py

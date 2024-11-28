@@ -29,18 +29,14 @@ def gif(
     images_for_gif = []
 
     for filename in file_path:
-        try:
-            with Image.open(filename) as img:
-                img_with_bg = add_background(img, size, background_color)
-                img_array = np.array(img_with_bg)
-                images_for_gif.append(img_array)
-        except FileNotFoundError:
-            pass
+        with Image.open(filename) as img:
+            img_with_bg = add_background(img, size, background_color)
+            img_array = np.array(img_with_bg)
+            images_for_gif.append(img_array)
 
-    if images_for_gif:
-        last_frame = images_for_gif[-1]
-        for _ in range(time_on_last_frame):
-            images_for_gif.append(last_frame)
+    last_frame = images_for_gif[-1]
+    for _ in range(time_on_last_frame):
+        images_for_gif.append(last_frame)
 
     imageio.mimsave(
         f"{output_path}",
