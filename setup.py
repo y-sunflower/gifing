@@ -4,7 +4,7 @@ setup(
     name="gifing",
     version="0.1.0",
     packages=find_packages(),
-    description="A super lightweight python tool for creating GIFs",
+    description="A lightweight python tool for creating GIFs",
     long_description=open("README.md").read(),
     long_description_content_type="text/markdown",
     author="Joseph Barbier",

@@ -4,7 +4,7 @@ version = "0.1.0"
 authors = [
   { name="Joseph Barbier", email="joseph.barbierdarnal@gmail.com" },
 ]
-description = "A super lightweight python tool for creating GIFs"
+description = "A lightweight python tool for creating GIFs"
 readme = "README.md"
 requires-python = ">=3.9"
 classifiers = [
