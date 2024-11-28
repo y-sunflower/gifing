@@ -1,10 +1,10 @@
 [project]
 name = "gifing"
-version = "0.0.0.9"
+version = "0.1.0"
 authors = [
   { name="Joseph Barbier", email="joseph.barbierdarnal@gmail.com" },
 ]
-description = "GIF maker for python"
+description = "A super lightweight python tool for creating GIFs"
 readme = "README.md"
 requires-python = ">=3.9"
 classifiers = [
