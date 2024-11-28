@@ -1,0 +1,19 @@
+Metadata-Version: 2.1
+Name: gifing
+Version: 0.0.0.9
+Summary: GIF maker for python
+Home-page: https://github.com/JosephBARBIERDARNAL/gifing/blob/main/README.md
+Author: Joseph Barbier
+Author-email: Joseph Barbier <joseph.barbierdarnal@gmail.com>
+Project-URL: Homepage, https://github.com/JosephBARBIERDARNAL/gifing
+Project-URL: Issues, https://github.com/JosephBARBIERDARNAL/gifing/issues
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Classifier: Framework :: Matplotlib
+Requires-Python: >=3.9
+Description-Content-Type: text/markdown
+Requires-Dist: imageio
+Requires-Dist: numpy
+
+# gifing

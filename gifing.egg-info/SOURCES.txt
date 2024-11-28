@@ -1,0 +1,10 @@
+README.md
+pyproject.toml
+setup.py
+gifing/__init__.py
+gifing/main.py
+gifing.egg-info/PKG-INFO
+gifing.egg-info/SOURCES.txt
+gifing.egg-info/dependency_links.txt
+gifing.egg-info/requires.txt
+gifing.egg-info/top_level.txt
