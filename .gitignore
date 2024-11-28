@@ -6,3 +6,4 @@ env/
 dev/
 sandbox.py
 *.gif
+!img/*.gif
