@@ -2,6 +2,10 @@
 
 GIF maker for python
 
+```bash
+pip install git+https://github.com/JosephBARBIERDARNAL/gifing.git
+```
+
 <br>
 
 ```python
