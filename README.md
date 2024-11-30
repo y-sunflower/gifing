@@ -6,14 +6,18 @@
 from gifing import Gif
 
 path = "tests/img"
+file_path = [f"{path}/image{i}.jpg" for i in range(1, 4)]
 gif = Gif(
-    [f"{path}/image{i}.jpg" for i in range(1, 4)],
+    file_path,
     frame_duration=800,
     n_repeat_last_frame=3,
 )
+gif.set_labels(
+    ["print", "hello", "world"], font_size=60, padding=20, loc="bottom right"
+)
 gif.set_background_color("red")
-gif.set_size((900, 600))
-gif.make()
+gif.set_size((900, 700), scale=1)
+gif.make("img/output.gif")
 ```
 
 ![](img/output.gif)
