@@ -16,7 +16,8 @@ classifiers = [
 ]
 dependencies = [
   "imageio",
-  "numpy"
+  "numpy",
+  "Pillow"
 ]
 
 [tool.setuptools]

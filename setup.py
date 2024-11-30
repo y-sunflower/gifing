@@ -10,5 +10,5 @@ setup(
     author="Joseph Barbier",
     author_email="joseph.barbierdarnal@gmail.com",
     url="https://github.com/JosephBARBIERDARNAL/gifing/blob/main/README.md",
-    install_requires=["imageio", "numpy"],
+    install_requires=["imageio", "numpy", "Pillow"],
 )
