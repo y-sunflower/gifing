@@ -2,7 +2,7 @@ import numpy as np
 import imageio
 from PIL import Image, ImageFile, ImageDraw, ImageFont
 from PIL.Image import Resampling
-from typing import Union, Tuple, List, Dict, Optional
+from typing import Union, Tuple, List, Optional
 import importlib.resources as pkg_resources
 import warnings
 
@@ -19,18 +19,19 @@ class Gif:
         """
         Initialize the GIF maker.
 
-        :param file_path: List of file paths to the images to be included in the GIF.
-        :param frame_duration: Duration of each frame in milliseconds.
-        :param n_repeat_last_frame: The number of additional frames to append with the last image.
+        Parameters
+        - file_path: List of file paths to the images to be included in the GIF.
+        - frame_duration: Duration of each frame in milliseconds.
+        - n_repeat_last_frame: The number of additional frames to append with the last image.
         """
         self.file_path = file_path
         self.frame_duration = frame_duration
         self.n_repeat_last_frame = n_repeat_last_frame
-        self.labels = {}
-        self.size = (1000, 1000)
+        self.labels = None
+        self.size = (500, 500)
         self.scale = 1
         self.background_color = (255, 255, 255)
-
+        self.label_loc = "top left"  # Default location
         ImageFile.LOAD_TRUNCATED_IMAGES = True
 
     def set_size(
@@ -39,8 +40,8 @@ class Gif:
         scale: int = 1,
     ):
         """
-        :param size: The size of the output GIF (width, height) in pixels.
-        :param scale: Scaling factor to adjust the size of the images in the GIF.
+        - size: The size of the output GIF (width, height) in pixels.
+        - scale: Scaling factor to adjust the size of the images in the GIF.
         """
         self.size = size
         self.scale = scale
@@ -50,7 +51,7 @@ class Gif:
         background_color: Union[str, Tuple[int, int, int]],
     ) -> None:
         """
-        :param background_color: The RGB color or string name of the background for each frame.
+        - background_color: The RGB color or string name of the background for each frame.
         Default is (255, 255, 255) (white). Strings can be names of colors such as "white", "black",
         "red", "green", "blue", "yellow", "cyan", "magenta", "gray", "orange", "purple" or "pink".
         :returns: None
@@ -61,16 +62,22 @@ class Gif:
 
     def set_labels(
         self,
-        labels: Dict[int, Dict[str, Union[str, int]]],
+        labels: List[str],
+        font_size: int = 20,
+        padding: int = 10,
+        loc: str = "top left",  # Add location argument with default value
     ) -> None:
         """
         Set labels for specific frames in the GIF.
-
-        :param labels: Dictionary where keys are frame indices (0-based) and values are dictionaries
-                    containing 'text' (str) and 'size' (int) keys.
-                    Example: {0: {'text': 'Frame 1', 'size': 24}, 1: {'text': 'Frame 2', 'size': 24}}
         """
+        if loc not in ["top left", "top right", "bottom left", "bottom right"]:
+            raise ValueError(
+                "Invalid loc. Choose from 'top left', 'top right', 'bottom left', 'bottom right'."
+            )
         self.labels = labels
+        self.padding = padding
+        self.font_size = font_size
+        self.label_loc = loc  # Store the location
 
     def make(
         self,
@@ -79,7 +86,7 @@ class Gif:
         """
         Creates and saves a GIF.
 
-        :param output_path: Path where the output GIF will be saved. Default is "./output.gif".
+        - output_path: Path where the output GIF will be saved. Default is "./output.gif".
         :returns: None
         """
         self.output_path = output_path
@@ -92,9 +99,9 @@ class Gif:
             warnings.warn("The output path does not have a '.gif' extension.")
             self.output_path += ".gif"
 
-        for idx, filename in enumerate(self.file_path):
+        for i, filename in enumerate(self.file_path):
             with Image.open(filename) as img:
-                img = self._format_image(img, frame_idx=idx)
+                img = self._format_image(img, frame_idx=i)
                 img_array = np.array(img)
                 images_for_gif.append(img_array)
 
@@ -126,20 +133,32 @@ class Gif:
         new_image = Image.new("RGB", self.size, self.background_color)
         new_image.paste(image, ((bg_w - new_w) // 2, (bg_h - new_h) // 2))
 
-        if frame_idx is not None and frame_idx in self.labels:
-            label_info = self.labels[frame_idx]
+        if self.labels is not None:
+            label_text = self.labels[frame_idx]
             draw = ImageDraw.Draw(new_image)
             with pkg_resources.path("gifing.fonts", "Urbanist-Bold.ttf") as font_path:
-                font = ImageFont.truetype(font_path, label_info["size"])
+                font = ImageFont.truetype(font_path, self.font_size)
 
             text_bbox = draw.textbbox(
-                (0, 0), label_info["text"], font=font, font_size=label_info["size"]
+                (0, 0), label_text, font=font, font_size=self.font_size
             )
             text_width = text_bbox[2] - text_bbox[0]
-            padding = 10
-            x = bg_w - text_width - padding
-            y = padding
+            text_height = text_bbox[3] - text_bbox[1]
 
-            draw.text((x, y), label_info["text"], font=font, fill=(0, 0, 0))
+            # Calculate position based on loc
+            if self.label_loc == "top left":
+                x = self.padding
+                y = self.padding
+            elif self.label_loc == "top right":
+                x = bg_w - text_width - self.padding
+                y = self.padding
+            elif self.label_loc == "bottom left":
+                x = self.padding
+                y = bg_h - text_height - self.padding
+            elif self.label_loc == "bottom right":
+                x = bg_w - text_width - self.padding
+                y = bg_h - text_height - self.padding
+
+            draw.text((x, y), label_text, font=font, fill=(0, 0, 0))
 
         return new_image
