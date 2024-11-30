@@ -6,17 +6,28 @@
 from gifing import Gif
 
 path = "tests/img"
+file_path = [f"{path}/image{i}.jpg" for i in range(1, 4)]
 gif = Gif(
-    [f"{path}/image{i}.jpg" for i in range(1, 4)],
+    file_path,
     frame_duration=800,
     n_repeat_last_frame=3,
 )
+gif.set_labels(
+    ["print", "hello", "world"], font_size=60, padding=20, loc="bottom right"
+)
 gif.set_background_color("red")
-gif.set_size((900, 600))
-gif.make()
+gif.set_size((900, 700), scale=1)
+gif.make("img/output.gif")
 ```
 
 ![](img/output.gif)
+
+This package offers:
+
+- a streamlined approach to creating GIFs
+- automatic image resizing
+- ability to set a background color during resizing
+- frame-by-frame label customization
 
 <br>
 
@@ -64,3 +75,10 @@ gif.make()
 ```
 
 By default, the GIF will be saved as `./output.gif`. You can customize the output path by passing it as an argument to the `make()` method.
+
+<br><br>
+
+## License
+
+- The source code in this repository is licensed under the [MIT License](./LICENSE).
+- The included fonts are licensed under the [SIL Open Font License, Version 1.1](./OFL.md).

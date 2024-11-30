@@ -1,3 +1,4 @@
+import os
 from gifing import Gif
 
 
@@ -11,7 +12,8 @@ def test_get_images():
     )
     gif.set_size((500, 500), scale=2)
     gif.set_background_color("yellow")
-    gif.make(output_path="test_output.gif")
+    gif.make("test_output.gif")
+    os.remove(gif.output_path)
 
     images = gif.get_images()
     assert len(images) == 4

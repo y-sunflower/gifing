@@ -1,6 +1,6 @@
 import subprocess
 
-packages = ["imageio", "numpy"]
+packages = ["imageio", "numpy", "Pillow"]
 REQUIREMENTS_FILE = "requirements.txt"
 
 
