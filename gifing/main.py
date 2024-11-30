@@ -1,8 +1,9 @@
 import numpy as np
 import imageio
-from PIL import Image, ImageFile
+from PIL import Image, ImageFile, ImageDraw, ImageFont
 from PIL.Image import Resampling
-from typing import Union, Tuple, List
+from typing import Union, Tuple, List, Dict, Optional
+import importlib.resources as pkg_resources
 import warnings
 
 from .utils.colors import _strcolor_to_rgb
@@ -25,6 +26,7 @@ class Gif:
         self.file_path = file_path
         self.frame_duration = frame_duration
         self.n_repeat_last_frame = n_repeat_last_frame
+        self.labels = {}
         self.size = (1000, 1000)
         self.scale = 1
         self.background_color = (255, 255, 255)
@@ -57,6 +59,19 @@ class Gif:
             background_color = _strcolor_to_rgb(background_color)
         self.background_color = background_color
 
+    def set_labels(
+        self,
+        labels: Dict[int, Dict[str, Union[str, int]]],
+    ) -> None:
+        """
+        Set labels for specific frames in the GIF.
+
+        :param labels: Dictionary where keys are frame indices (0-based) and values are dictionaries
+                    containing 'text' (str) and 'size' (int) keys.
+                    Example: {0: {'text': 'Frame 1', 'size': 24}, 1: {'text': 'Frame 2', 'size': 24}}
+        """
+        self.labels = labels
+
     def make(
         self,
         output_path: str = "./output.gif",
@@ -77,9 +92,9 @@ class Gif:
             warnings.warn("The output path does not have a '.gif' extension.")
             self.output_path += ".gif"
 
-        for filename in self.file_path:
+        for idx, filename in enumerate(self.file_path):
             with Image.open(filename) as img:
-                img = self._format_image(img)
+                img = self._format_image(img, frame_idx=idx)
                 img_array = np.array(img)
                 images_for_gif.append(img_array)
 
@@ -101,10 +116,7 @@ class Gif:
     def get_images(self) -> List:
         return self.images_for_gif
 
-    def _format_image(self, image):
-        """
-        :param image: The image to be resized and placed on a background.
-        """
+    def _format_image(self, image, frame_idx: Optional[int] = None):
         img_w, img_h = image.size
         bg_w, bg_h = self.size
         scale = min(bg_w / img_w, bg_h / img_h)
@@ -113,4 +125,21 @@ class Gif:
         image = image.resize((new_w, new_h), Resampling.LANCZOS)
         new_image = Image.new("RGB", self.size, self.background_color)
         new_image.paste(image, ((bg_w - new_w) // 2, (bg_h - new_h) // 2))
+
+        if frame_idx is not None and frame_idx in self.labels:
+            label_info = self.labels[frame_idx]
+            draw = ImageDraw.Draw(new_image)
+            with pkg_resources.path("gifing.fonts", "Urbanist-Bold.ttf") as font_path:
+                font = ImageFont.truetype(font_path, label_info["size"])
+
+            text_bbox = draw.textbbox(
+                (0, 0), label_info["text"], font=font, font_size=label_info["size"]
+            )
+            text_width = text_bbox[2] - text_bbox[0]
+            padding = 10
+            x = bg_w - text_width - padding
+            y = padding
+
+            draw.text((x, y), label_info["text"], font=font, fill=(0, 0, 0))
+
         return new_image
