@@ -2,9 +2,21 @@
 
 > A lightweight python tool for creating GIFs
 
-![](img/output.gif)
+```python
+from gifing import Gif
 
-_&#8594; I mostly made this tool to explain how I make charts_
+path = "tests/img"
+gif = Gif(
+    [f"{path}/image{i}.jpg" for i in range(1, 4)],
+    frame_duration=800,
+    n_repeat_last_frame=3,
+)
+gif.set_background_color("red")
+gif.set_size((900, 600))
+gif.make()
+```
+
+![](img/output.gif)
 
 <br>
 
