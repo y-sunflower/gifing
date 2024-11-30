@@ -10,7 +10,7 @@ requires-python = ">=3.9"
 classifiers = [
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: MIT License",
-    "License :: OSI Approved :: SIL Open Font License 1.1 (OFL-1.1)"
+    "License :: OSI Approved :: SIL Open Font License 1.1 (OFL-1.1)",
     "Operating System :: OS Independent",
     "Framework :: Matplotlib"
 ]
