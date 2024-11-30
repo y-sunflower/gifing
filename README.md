@@ -18,6 +18,13 @@ gif.make()
 
 ![](img/output.gif)
 
+This package offers:
+
+- a streamlined approach to creating GIFs
+- automatic image resizing
+- ability to set a background color during resizing
+- frame-by-frame label customization
+
 <br>
 
 ### Installation
@@ -64,3 +71,10 @@ gif.make()
 ```
 
 By default, the GIF will be saved as `./output.gif`. You can customize the output path by passing it as an argument to the `make()` method.
+
+<br><br>
+
+## License
+
+- The source code in this repository is licensed under the [MIT License](./LICENSE).
+- The included fonts are licensed under the [SIL Open Font License, Version 1.1](./OFL.md).

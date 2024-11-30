@@ -40,6 +40,9 @@ class Gif:
         scale: int = 1,
     ):
         """
+        Set the size (width, height) and scale (default 1) of each image.
+
+        Parameters
         - size: The size of the output GIF (width, height) in pixels.
         - scale: Scaling factor to adjust the size of the images in the GIF.
         """
@@ -51,10 +54,12 @@ class Gif:
         background_color: Union[str, Tuple[int, int, int]],
     ) -> None:
         """
-        - background_color: The RGB color or string name of the background for each frame.
+        Set the background color to use when images have different size.
+
+        Parameters
+        - background_color: The RGB color, hex color or string name of the background for each frame.
         Default is (255, 255, 255) (white). Strings can be names of colors such as "white", "black",
         "red", "green", "blue", "yellow", "cyan", "magenta", "gray", "orange", "purple" or "pink".
-        :returns: None
         """
         if isinstance(background_color, str):
             background_color = _strcolor_to_rgb(background_color)
@@ -65,29 +70,35 @@ class Gif:
         labels: List[str],
         font_size: int = 20,
         padding: int = 10,
-        loc: str = "top left",  # Add location argument with default value
+        loc: str = "top left",
     ) -> None:
         """
         Set labels for specific frames in the GIF.
+
+        Parameters
+        - labels: a list of strings of the same length as the number of images.
+        - font_size: size of the font in pixels.
+        - padding: text padding in pixels
+        - loc: one of "top left", "top right", "bottom left", "bottom right".
         """
         if loc not in ["top left", "top right", "bottom left", "bottom right"]:
             raise ValueError(
-                "Invalid loc. Choose from 'top left', 'top right', 'bottom left', 'bottom right'."
+                "Invalid loc. Choose from: "
+                "'top left', 'top right', 'bottom left', 'bottom right'."
             )
         self.labels = labels
         self.padding = padding
         self.font_size = font_size
-        self.label_loc = loc  # Store the location
+        self.label_loc = loc
 
     def make(
         self,
         output_path: str = "./output.gif",
     ) -> None:
         """
-        Creates and saves a GIF.
+        Make (and save) a GIF.
 
-        - output_path: Path where the output GIF will be saved. Default is "./output.gif".
-        :returns: None
+        - output_path: path where the output GIF will be saved.
         """
         self.output_path = output_path
 
@@ -101,7 +112,9 @@ class Gif:
 
         for i, filename in enumerate(self.file_path):
             with Image.open(filename) as img:
-                img = self._format_image(img, frame_idx=i)
+                img = self._format_image(img)
+                if self.labels is not None:
+                    self._draw_label(img, frame_idx=i)
                 img_array = np.array(img)
                 images_for_gif.append(img_array)
 
@@ -121,44 +134,47 @@ class Gif:
         print(f"GIF created and saved at {output_path}")
 
     def get_images(self) -> List:
+        """
+        Retrieve a list with all the images
+        """
         return self.images_for_gif
 
-    def _format_image(self, image, frame_idx: Optional[int] = None):
+    def _format_image(self, image):
         img_w, img_h = image.size
         bg_w, bg_h = self.size
+        self.bg_w = bg_w
+        self.bg_h = bg_h
         scale = min(bg_w / img_w, bg_h / img_h)
         new_w = int(img_w * scale)
         new_h = int(img_h * scale)
         image = image.resize((new_w, new_h), Resampling.LANCZOS)
         new_image = Image.new("RGB", self.size, self.background_color)
         new_image.paste(image, ((bg_w - new_w) // 2, (bg_h - new_h) // 2))
-
-        if self.labels is not None:
-            label_text = self.labels[frame_idx]
-            draw = ImageDraw.Draw(new_image)
-            with pkg_resources.path("gifing.fonts", "Urbanist-Bold.ttf") as font_path:
-                font = ImageFont.truetype(font_path, self.font_size)
-
-            text_bbox = draw.textbbox(
-                (0, 0), label_text, font=font, font_size=self.font_size
-            )
-            text_width = text_bbox[2] - text_bbox[0]
-            text_height = text_bbox[3] - text_bbox[1]
-
-            # Calculate position based on loc
-            if self.label_loc == "top left":
-                x = self.padding
-                y = self.padding
-            elif self.label_loc == "top right":
-                x = bg_w - text_width - self.padding
-                y = self.padding
-            elif self.label_loc == "bottom left":
-                x = self.padding
-                y = bg_h - text_height - self.padding
-            elif self.label_loc == "bottom right":
-                x = bg_w - text_width - self.padding
-                y = bg_h - text_height - self.padding
-
-            draw.text((x, y), label_text, font=font, fill=(0, 0, 0))
-
         return new_image
+
+    def _draw_label(self, img, frame_idx: Optional[int] = None) -> None:
+        label_text = self.labels[frame_idx]
+        draw = ImageDraw.Draw(img)
+        with pkg_resources.path("gifing.fonts", "Urbanist-Bold.ttf") as font_path:
+            font = ImageFont.truetype(font_path, self.font_size)
+
+        text_bbox = draw.textbbox(
+            (0, 0), label_text, font=font, font_size=self.font_size
+        )
+        text_width = text_bbox[2] - text_bbox[0]
+        text_height = text_bbox[3] - text_bbox[1]
+
+        if self.label_loc == "top left":
+            x = self.padding
+            y = self.padding
+        elif self.label_loc == "top right":
+            x = self.bg_w - text_width - self.padding
+            y = self.padding
+        elif self.label_loc == "bottom left":
+            x = self.padding
+            y = self.bg_h - text_height - self.padding
+        elif self.label_loc == "bottom right":
+            x = self.bg_w - text_width - self.padding
+            y = self.bg_h - text_height - self.padding
+
+        draw.text((x, y), label_text, font=font, fill=(0, 0, 0))
