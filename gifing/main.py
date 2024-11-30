@@ -3,89 +3,114 @@ import imageio
 from PIL import Image, ImageFile
 from PIL.Image import Resampling
 from typing import Union, Tuple, List
+import warnings
 
-from .utils import _strcolor_to_rgb
-
-ImageFile.LOAD_TRUNCATED_IMAGES = True
-
-
-def _set_size_and_background(
-    image, size: tuple, background_color: Union[str, Tuple[int, int, int]]
-):
-    """
-    Resizes an image while maintaining its aspect ratio and places it on a background of the specified size and color.
-
-    Args:
-        image (PIL.Image.Image): The image to be resized and placed on a background.
-        size (tuple): The size of the background (width, height) in pixels.
-        background_color (tuple): The RGB color of the background.
-
-    Returns:
-        PIL.Image.Image: The resized image centered on the background.
-    """
-    img_w, img_h = image.size
-    bg_w, bg_h = size
-    scale = min(bg_w / img_w, bg_h / img_h)
-    new_w = int(img_w * scale)
-    new_h = int(img_h * scale)
-    image = image.resize((new_w, new_h), Resampling.LANCZOS)
-    new_image = Image.new("RGB", size, background_color)
-    new_image.paste(image, ((bg_w - new_w) // 2, (bg_h - new_h) // 2))
-    return new_image
+from .utils.colors import _strcolor_to_rgb
 
 
-def gif(
-    file_path: List[str],
-    frame_duration: int = 1000,
-    size: Tuple[int, int] = (1000, 1000),
-    background_color: Union[str, Tuple[int, int, int]] = (255, 255, 255),
-    output_path: str = "./output.gif",
-    n_repeat_last_frame: int = 1,
-    size_scale: int = 1,
-) -> None:
-    """
-    Creates a GIF from a sequence of image files.
+class Gif:
+    def __init__(
+        self,
+        file_path: List[str],
+        frame_duration: int = 1000,
+        n_repeat_last_frame: int = 1,
+    ):
+        """
+        Initialize the GIF maker.
 
-    Args:
-        - file_path (List[str]): List of file paths to the images to be included in the GIF.
-        - frame_duration (int, optional): Duration of each frame in milliseconds. Default is 1000ms.
-        - size (Tuple[int, int], optional): The size of the output GIF (width, height) in pixels. Default is (1000, 1000).
-        - background_color (Union[str, Tuple[int, int, int]], optional): The RGB color or string name of the background
-        for each frame. Default is (255, 255, 255) (white). Strings can be names of colors such as "white", "black", "red",
-        "green", "blue", "yellow", "cyan", "magenta", "gray", "orange", "purple" or "pink".
-        - output_path (str, optional): Path where the output GIF will be saved. Default is "./output.gif".
-        - n_repeat_last_frame (int, optional): The number of additional frames to append with the last image. Default is 1.
-        - size_scale (int, optional): Scaling factor to adjust the size of the images in the GIF. Default is 1 (no scaling).
+        :param file_path: List of file paths to the images to be included in the GIF.
+        :param frame_duration: Duration of each frame in milliseconds.
+        :param n_repeat_last_frame: The number of additional frames to append with the last image.
+        """
+        self.file_path = file_path
+        self.frame_duration = frame_duration
+        self.n_repeat_last_frame = n_repeat_last_frame
+        self.size = (1000, 1000)
+        self.scale = 1
+        self.background_color = (255, 255, 255)
 
-    Returns:
-        None
-    """
-    images_for_gif = []
+        ImageFile.LOAD_TRUNCATED_IMAGES = True
 
-    size = (size[0] * size_scale, size[1] * size_scale)
+    def set_size(
+        self,
+        size: Tuple[int, int],
+        scale: int = 1,
+    ):
+        """
+        :param size: The size of the output GIF (width, height) in pixels.
+        :param scale: Scaling factor to adjust the size of the images in the GIF.
+        """
+        self.size = size
+        self.scale = scale
 
-    if isinstance(background_color, str):
-        background_color = _strcolor_to_rgb(background_color)
+    def set_background_color(
+        self,
+        background_color: Union[str, Tuple[int, int, int]],
+    ) -> None:
+        """
+        :param background_color: The RGB color or string name of the background for each frame.
+        Default is (255, 255, 255) (white). Strings can be names of colors such as "white", "black",
+        "red", "green", "blue", "yellow", "cyan", "magenta", "gray", "orange", "purple" or "pink".
+        :returns: None
+        """
+        if isinstance(background_color, str):
+            background_color = _strcolor_to_rgb(background_color)
+        self.background_color = background_color
 
-    if not output_path.endswith(".gif"):
-        output_path += ".gif"
+    def make(
+        self,
+        output_path: str = "./output.gif",
+    ) -> None:
+        """
+        Creates and saves a GIF.
 
-    for filename in file_path:
-        with Image.open(filename) as img:
-            img = _set_size_and_background(img, size, background_color)
-            img_array = np.array(img)
-            images_for_gif.append(img_array)
+        :param output_path: Path where the output GIF will be saved. Default is "./output.gif".
+        :returns: None
+        """
+        self.output_path = output_path
 
-    last_frame = images_for_gif[-1]
-    for _ in range(n_repeat_last_frame):
-        print("here")
-        images_for_gif.append(last_frame)
+        images_for_gif = []
 
-    imageio.mimsave(
-        f"{output_path}",
-        images_for_gif,
-        duration=[frame_duration] * len(images_for_gif),
-        format="GIF",
-        loop=0,
-    )
-    print(f"GIF created and saved at {output_path}")
+        self.dim = (self.size[0] * self.scale, self.size[1] * self.scale)
+
+        if not self.output_path.endswith(".gif"):
+            warnings.warn("The output path does not have a '.gif' extension.")
+            self.output_path += ".gif"
+
+        for filename in self.file_path:
+            with Image.open(filename) as img:
+                img = self._format_image(img)
+                img_array = np.array(img)
+                images_for_gif.append(img_array)
+
+        last_frame = images_for_gif[-1]
+        for _ in range(self.n_repeat_last_frame):
+            images_for_gif.append(last_frame)
+
+        self.images_for_gif = images_for_gif
+
+        imageio.mimsave(
+            f"{output_path}",
+            self.images_for_gif,
+            duration=[self.frame_duration] * len(self.images_for_gif),
+            format="GIF",
+            loop=0,
+        )
+        print(f"GIF created and saved at {output_path}")
+
+    def get_images(self) -> List:
+        return self.images_for_gif
+
+    def _format_image(self, image):
+        """
+        :param image: The image to be resized and placed on a background.
+        """
+        img_w, img_h = image.size
+        bg_w, bg_h = self.size
+        scale = min(bg_w / img_w, bg_h / img_h)
+        new_w = int(img_w * scale)
+        new_h = int(img_h * scale)
+        image = image.resize((new_w, new_h), Resampling.LANCZOS)
+        new_image = Image.new("RGB", self.size, self.background_color)
+        new_image.paste(image, ((bg_w - new_w) // 2, (bg_h - new_h) // 2))
+        return new_image

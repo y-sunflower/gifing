@@ -10,7 +10,7 @@ _&#8594; I mostly made this tool to explain how I make charts_
 
 ### Installation
 
-Install directly via pip:
+Install directly via pip (requires Python >=3.10):
 
 ```bash
 pip install git+https://github.com/JosephBARBIERDARNAL/gifing.git
@@ -20,62 +20,35 @@ pip install git+https://github.com/JosephBARBIERDARNAL/gifing.git
 
 ### Usage
 
-Import the `gif()` function and provide a list of image file paths:
+Import the `Gif` class and provide a list of image file paths:
 
 ```python
-from gifing import gif
+from gifing import Gif
 
-file_paths = ["image1.png", "image2.png", "image3.png"]
+path = "tests/img"
+gif = Gif(
+    [f"{path}/image{i}.jpg" for i in range(1, 4)],
+    frame_duration=800,  # Duration per frame (in milliseconds)
+    n_repeat_last_frame=3,  # Repeat last frame 3x longer
+)
 ```
 
-<br>
-
-- **Create a GIF**
+You can set a background color, which is useful if your images have varying sizes:
 
 ```python
-gif(file_paths)
+gif.set_background_color("black")
 ```
 
-The GIF will be created and saved as `./output.gif`.
-
-<br>
-
-- **Specify a custom output path**
+You can also set a custom size for your GIF. The `set_size` method allows you to specify a target size and scale factor:
 
 ```python
-gif(file_paths, output_path="img/mygif.gif")
+gif.set_size((300, 800), scale=1)  # Set the size to (300, 800) with no scaling
 ```
 
-The GIF will be saved at `img/mygif.gif`.
-
-<br>
-
-- **Set a custom background color**  
-  _(Useful when images have varying sizes)_
+Finally, call the `make()` method to generate the GIF:
 
 ```python
-gif(file_paths, background_color="black")
+gif.make()
 ```
 
-The GIF will be saved as `./output.gif`.
-
-<br>
-
-- **Adjust the duration of each frame**
-
-```python
-gif(file_paths, frame_duration=500)  # 500ms per frame
-```
-
-The GIF will be saved as `./output.gif`.
-
-<br>
-
-- **Extend the display time of the last frame**  
-  _(Specify a multiplier for the `frame_duration`)_
-
-```python
-gif(file_paths, n_repeat_last_frame=3)  # Last frame displayed 3x longer
-```
-
-The GIF will be saved as `./output.gif`.
+By default, the GIF will be saved as `./output.gif`. You can customize the output path by passing it as an argument to the `make()` method.

@@ -1,1 +1,3 @@
-from .main import gif
+from .main import Gif
+
+__all__ = ["Gif"]
