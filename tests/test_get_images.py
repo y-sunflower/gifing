@@ -6,7 +6,7 @@ def test_get_images():
         file_path=[
             "tests/img/image1.jpg",
             "tests/img/image2.jpg",
-            "tests/img/image3.png",
+            "tests/img/image3.jpg",
         ]
     )
     gif.set_size((500, 500), scale=2)
