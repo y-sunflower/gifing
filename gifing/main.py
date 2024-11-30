@@ -85,7 +85,6 @@ class Gif:
 
         last_frame = images_for_gif[-1]
         for _ in range(self.n_repeat_last_frame):
-            print("here")
             images_for_gif.append(last_frame)
 
         self.images_for_gif = images_for_gif
