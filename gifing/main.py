@@ -15,6 +15,7 @@ class Gif:
         file_path: List[str],
         frame_duration: int = 1000,
         n_repeat_last_frame: int = 1,
+        verbose: bool = True,
     ):
         """
         Initialize the GIF maker.
@@ -23,15 +24,20 @@ class Gif:
         - file_path: List of file paths to the images to be included in the GIF.
         - frame_duration: Duration of each frame in milliseconds.
         - n_repeat_last_frame: The number of additional frames to append with the last image.
+        - verbose: whether to print things in the console.
         """
         self.file_path = file_path
         self.frame_duration = frame_duration
         self.n_repeat_last_frame = n_repeat_last_frame
-        self.labels = None
         self.size = (500, 500)
         self.scale = 1
         self.background_color = (255, 255, 255)
-        self.label_loc = "top left"  # Default location
+        self.label_loc = None
+        self.labels = None
+        self.images_for_gif = [None] * len(file_path)
+        self.shadow_offset = 10
+        self.box_padding = 10
+        self.verbose = verbose
         ImageFile.LOAD_TRUNCATED_IMAGES = True
 
     def set_size(
@@ -57,9 +63,10 @@ class Gif:
         Set the background color to use when images have different size.
 
         Parameters
-        - background_color: The RGB color, hex color or string name of the background for each frame.
-        Default is (255, 255, 255) (white). Strings can be names of colors such as "white", "black",
-        "red", "green", "blue", "yellow", "cyan", "magenta", "gray", "orange", "purple" or "pink".
+        - background_color: The RGB color, hex color or string name of the
+        background for each frame. Default is (255, 255, 255) (white). Strings
+        can be names of colors such as "white", "black", "red", "green",
+        "blue", "yellow", "cyan", "magenta", "gray", "orange", "purple" or "pink".
         """
         if isinstance(background_color, str):
             background_color = _strcolor_to_rgb(background_color)
@@ -69,8 +76,12 @@ class Gif:
         self,
         labels: List[str],
         font_size: int = 20,
-        padding: int = 10,
         loc: str = "top left",
+        text_padding: int = 40,
+        box_padding: int = 20,
+        box_color: tuple = (255, 255, 255),
+        shadow_offset: int = 10,
+        font: str = "Arial",
     ) -> None:
         """
         Set labels for specific frames in the GIF.
@@ -78,8 +89,11 @@ class Gif:
         Parameters
         - labels: a list of strings of the same length as the number of images.
         - font_size: size of the font in pixels.
-        - padding: text padding in pixels
         - loc: one of "top left", "top right", "bottom left", "bottom right".
+        - text_padding: text padding in pixels
+        - box_padding: box padding in pixels
+        - shadow_offset: offset of the box shadow
+        - font: the font for the labels (either "Arial" or "Urbanist")
         """
         if loc not in ["top left", "top right", "bottom left", "bottom right"]:
             raise ValueError(
@@ -87,9 +101,15 @@ class Gif:
                 "'top left', 'top right', 'bottom left', 'bottom right'."
             )
         self.labels = labels
-        self.padding = padding
         self.font_size = font_size
         self.label_loc = loc
+        self.text_padding = text_padding
+        self.box_padding = box_padding
+        self.shadow_offset = shadow_offset
+        self.font = font
+        if isinstance(box_color, str):
+            box_color = _strcolor_to_rgb(box_color)
+        self.box_color = box_color
 
     def make(
         self,
@@ -104,7 +124,7 @@ class Gif:
 
         images_for_gif = []
 
-        self.dim = (self.size[0] * self.scale, self.size[1] * self.scale)
+        self.dim = (round(self.size[0] * self.scale), round(self.size[1] * self.scale))
 
         if not self.output_path.endswith(".gif"):
             warnings.warn("The output path does not have a '.gif' extension.")
@@ -119,62 +139,79 @@ class Gif:
                 images_for_gif.append(img_array)
 
         last_frame = images_for_gif[-1]
-        for _ in range(self.n_repeat_last_frame):
+        for _ in range(self.n_repeat_last_frame - 1):
             images_for_gif.append(last_frame)
 
         self.images_for_gif = images_for_gif
 
         imageio.mimsave(
-            f"{output_path}",
+            f"{self.output_path}",
             self.images_for_gif,
             duration=[self.frame_duration] * len(self.images_for_gif),
             format="GIF",
             loop=0,
         )
-        print(f"GIF created and saved at {output_path}")
+
+        if self.verbose:
+            print(f"GIF created and saved at {output_path}")
 
     def get_images(self) -> List:
         """
         Retrieve a list with all the images
         """
-        return self.images_for_gif
+        if not np.any(self.images_for_gif):
+            raise Exception("Unable to retrieve images before calling Gif.make()")
+        else:
+            return self.images_for_gif
 
     def _format_image(self, image):
         img_w, img_h = image.size
-        bg_w, bg_h = self.size
+        bg_w, bg_h = self.dim
         self.bg_w = bg_w
         self.bg_h = bg_h
         scale = min(bg_w / img_w, bg_h / img_h)
         new_w = int(img_w * scale)
         new_h = int(img_h * scale)
         image = image.resize((new_w, new_h), Resampling.LANCZOS)
-        new_image = Image.new("RGB", self.size, self.background_color)
+        new_image = Image.new("RGB", self.dim, self.background_color)
         new_image.paste(image, ((bg_w - new_w) // 2, (bg_h - new_h) // 2))
         return new_image
 
     def _draw_label(self, img, frame_idx: Optional[int] = None) -> None:
         label_text = self.labels[frame_idx]
         draw = ImageDraw.Draw(img)
-        with pkg_resources.path("gifing.fonts", "Urbanist-Bold.ttf") as font_path:
+        font_file = str(self.font).title() + ".ttf"
+        with pkg_resources.path("gifing.fonts", font_file) as font_path:
             font = ImageFont.truetype(font_path, self.font_size)
 
         text_bbox = draw.textbbox(
-            (0, 0), label_text, font=font, font_size=self.font_size
+            (0, 0), label_text, font=font, font_size=self.font_size, align="center"
         )
         text_width = text_bbox[2] - text_bbox[0]
         text_height = text_bbox[3] - text_bbox[1]
 
         if self.label_loc == "top left":
-            x = self.padding
-            y = self.padding
+            x = self.text_padding
+            y = self.text_padding
         elif self.label_loc == "top right":
-            x = self.bg_w - text_width - self.padding
-            y = self.padding
+            x = self.bg_w - text_width - self.text_padding
+            y = self.text_padding
         elif self.label_loc == "bottom left":
-            x = self.padding
-            y = self.bg_h - text_height - self.padding
+            x = self.text_padding
+            y = self.bg_h - text_height - self.text_padding
         elif self.label_loc == "bottom right":
-            x = self.bg_w - text_width - self.padding
-            y = self.bg_h - text_height - self.padding
+            x = self.bg_w - text_width - self.text_padding
+            y = self.bg_h - text_height - self.text_padding
 
-        draw.text((x, y), label_text, font=font, fill=(0, 0, 0))
+        box_coords = [
+            x - self.box_padding,
+            y - self.box_padding,
+            x + text_width + self.box_padding,
+            y + text_height + self.box_padding,
+        ]
+
+        shadow_coords = [coord + self.shadow_offset for coord in box_coords]
+
+        draw.rectangle(shadow_coords, fill=(50, 50, 50, 128))
+        draw.rectangle(box_coords, fill=self.box_color)
+        draw.text((x, y - 10), label_text, font=font, fill=(0, 0, 0), align="center")
