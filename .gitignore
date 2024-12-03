@@ -7,5 +7,5 @@ dev/
 sandbox.py
 *.gif
 !img/*.gif
-
+dist/
 doc.sh

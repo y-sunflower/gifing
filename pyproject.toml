@@ -18,11 +18,8 @@ dependencies = [
   "Pillow"
 ]
 
-[tool.setuptools]
-license_files = ["LICENSE"]
-
 [build-system]
-requires = ["setuptools"]
+requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
 [project.urls]
