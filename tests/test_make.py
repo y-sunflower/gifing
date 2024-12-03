@@ -1,9 +1,9 @@
-import os
 import pytest
+import os
 from gifing import Gif
 
 
-def test_get_images_before_make():
+def test_make_with_wrong_path_raises_warning():
     gif = Gif(
         file_path=[
             "tests/img/image1.jpg",
@@ -11,14 +11,13 @@ def test_get_images_before_make():
             "tests/img/image3.jpg",
         ]
     )
-    gif.set_size((500, 500), scale=2)
-    gif.set_background_color("yellow")
 
-    with pytest.raises(Exception):
-        gif.get_images()
+    with pytest.warns():
+        gif.make("output")
+        os.remove(gif.output_path)
 
 
-def test_get_images_after_make():
+def test_resizing_and_scaling():
     gif = Gif(
         file_path=[
             "tests/img/image1.jpg",
@@ -26,11 +25,10 @@ def test_get_images_after_make():
             "tests/img/image3.jpg",
         ]
     )
-    gif.set_size((500, 500), scale=2)
-    gif.set_background_color("yellow")
-    gif.make("test_output.gif")
+    gif.set_size((500, 600), scale=2)
+    gif.make()
     os.remove(gif.output_path)
 
     images = gif.get_images()
-    assert len(images) == 3
-    assert len(images) == len(gif.file_path)
+    for i in range(len(gif.file_path)):
+        assert len(images[i]) == 1200

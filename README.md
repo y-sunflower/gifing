@@ -2,6 +2,17 @@
 
 > A lightweight python tool for creating GIFs
 
+<br>
+<br>
+
+Let's make a gif with these images of different sizes.
+
+<p align="center">
+  <img src="tests/img/image1.jpg" width="30%" />
+  <img src="tests/img/image2.jpg" width="30%" />
+  <img src="tests/img/image3.jpg" width="30%" />
+</p>
+
 ```python
 from gifing import Gif
 
@@ -15,10 +26,12 @@ gif = Gif(
 gif.set_labels(
     ["print", "hello", "world"],
     font_size=60,
-    loc="top left",
+    loc="bottom left",
     text_padding=40,
     box_padding=20,
+    box_color="#fffcee",
     shadow_offset=15,
+    font="Urbanist",
 )
 gif.set_background_color("red")
 gif.set_size((900, 700), scale=1)
@@ -33,6 +46,8 @@ This package offers:
 - automatic image resizing
 - ability to set a background color during resizing
 - frame-by-frame label customization
+
+It's a basic prototype of the functionality I envision for this tool. The API is still unstable.
 
 <br>
 

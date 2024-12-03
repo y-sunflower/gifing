@@ -15,6 +15,7 @@ class Gif:
         file_path: List[str],
         frame_duration: int = 1000,
         n_repeat_last_frame: int = 1,
+        verbose: bool = True,
     ):
         """
         Initialize the GIF maker.
@@ -23,6 +24,7 @@ class Gif:
         - file_path: List of file paths to the images to be included in the GIF.
         - frame_duration: Duration of each frame in milliseconds.
         - n_repeat_last_frame: The number of additional frames to append with the last image.
+        - verbose: whether to print things in the console.
         """
         self.file_path = file_path
         self.frame_duration = frame_duration
@@ -32,9 +34,10 @@ class Gif:
         self.background_color = (255, 255, 255)
         self.label_loc = None
         self.labels = None
-        self.images_for_gif = None
+        self.images_for_gif = [None] * len(file_path)
         self.shadow_offset = 10
         self.box_padding = 10
+        self.verbose = verbose
         ImageFile.LOAD_TRUNCATED_IMAGES = True
 
     def set_size(
@@ -74,8 +77,8 @@ class Gif:
         labels: List[str],
         font_size: int = 20,
         loc: str = "top left",
-        text_padding: int = 10,
-        box_padding: int = 10,
+        text_padding: int = 40,
+        box_padding: int = 20,
         box_color: tuple = (255, 255, 255),
         shadow_offset: int = 10,
         font: str = "Arial",
@@ -136,25 +139,30 @@ class Gif:
                 images_for_gif.append(img_array)
 
         last_frame = images_for_gif[-1]
-        for _ in range(self.n_repeat_last_frame):
+        for _ in range(self.n_repeat_last_frame - 1):
             images_for_gif.append(last_frame)
 
         self.images_for_gif = images_for_gif
 
         imageio.mimsave(
-            f"{output_path}",
+            f"{self.output_path}",
             self.images_for_gif,
             duration=[self.frame_duration] * len(self.images_for_gif),
             format="GIF",
             loop=0,
         )
-        print(f"GIF created and saved at {output_path}")
+
+        if self.verbose:
+            print(f"GIF created and saved at {output_path}")
 
     def get_images(self) -> List:
         """
         Retrieve a list with all the images
         """
-        return self.images_for_gif
+        if not np.any(self.images_for_gif):
+            raise Exception("Unable to retrieve images before calling Gif.make()")
+        else:
+            return self.images_for_gif
 
     def _format_image(self, image):
         img_w, img_h = image.size
@@ -195,9 +203,6 @@ class Gif:
             x = self.bg_w - text_width - self.text_padding
             y = self.bg_h - text_height - self.text_padding
 
-        baseline_correction = (text_height - (text_bbox[3] - text_bbox[1])) // 2
-        y_centered = y + baseline_correction
-
         box_coords = [
             x - self.box_padding,
             y - self.box_padding,
@@ -209,6 +214,4 @@ class Gif:
 
         draw.rectangle(shadow_coords, fill=(50, 50, 50, 128))
         draw.rectangle(box_coords, fill=self.box_color)
-        draw.text(
-            (x, y_centered - 10), label_text, font=font, fill=(0, 0, 0), align="center"
-        )
+        draw.text((x, y - 10), label_text, font=font, fill=(0, 0, 0), align="center")
