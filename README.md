@@ -3,14 +3,11 @@
 > A lightweight python tool for creating GIFs
 
 <br>
-<br>
-
-Let's make a gif with these images of different sizes.
 
 <p align="center">
-  <img src="tests/img/image1.jpg" width="30%" />
-  <img src="tests/img/image2.jpg" width="30%" />
-  <img src="tests/img/image3.jpg" width="30%" />
+  <img src="tests/img/image1.jpg" width="25%" />
+  <img src="tests/img/image2.jpg" width="25%" />
+  <img src="tests/img/image3.jpg" width="25%" />
 </p>
 
 ```python
