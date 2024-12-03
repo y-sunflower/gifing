@@ -76,7 +76,9 @@ class Gif:
         loc: str = "top left",
         text_padding: int = 10,
         box_padding: int = 10,
+        box_color: tuple = (255, 255, 255),
         shadow_offset: int = 10,
+        font: str = "Arial",
     ) -> None:
         """
         Set labels for specific frames in the GIF.
@@ -88,6 +90,7 @@ class Gif:
         - text_padding: text padding in pixels
         - box_padding: box padding in pixels
         - shadow_offset: offset of the box shadow
+        - font: the font for the labels (either "Arial" or "Urbanist")
         """
         if loc not in ["top left", "top right", "bottom left", "bottom right"]:
             raise ValueError(
@@ -100,6 +103,10 @@ class Gif:
         self.text_padding = text_padding
         self.box_padding = box_padding
         self.shadow_offset = shadow_offset
+        self.font = font
+        if isinstance(box_color, str):
+            box_color = _strcolor_to_rgb(box_color)
+        self.box_color = box_color
 
     def make(
         self,
@@ -114,7 +121,7 @@ class Gif:
 
         images_for_gif = []
 
-        self.dim = (self.size[0] * self.scale, self.size[1] * self.scale)
+        self.dim = (round(self.size[0] * self.scale), round(self.size[1] * self.scale))
 
         if not self.output_path.endswith(".gif"):
             warnings.warn("The output path does not have a '.gif' extension.")
@@ -151,25 +158,26 @@ class Gif:
 
     def _format_image(self, image):
         img_w, img_h = image.size
-        bg_w, bg_h = self.size
+        bg_w, bg_h = self.dim
         self.bg_w = bg_w
         self.bg_h = bg_h
         scale = min(bg_w / img_w, bg_h / img_h)
         new_w = int(img_w * scale)
         new_h = int(img_h * scale)
         image = image.resize((new_w, new_h), Resampling.LANCZOS)
-        new_image = Image.new("RGB", self.size, self.background_color)
+        new_image = Image.new("RGB", self.dim, self.background_color)
         new_image.paste(image, ((bg_w - new_w) // 2, (bg_h - new_h) // 2))
         return new_image
 
     def _draw_label(self, img, frame_idx: Optional[int] = None) -> None:
         label_text = self.labels[frame_idx]
         draw = ImageDraw.Draw(img)
-        with pkg_resources.path("gifing.fonts", "Urbanist-Bold.ttf") as font_path:
+        font_file = str(self.font).title() + ".ttf"
+        with pkg_resources.path("gifing.fonts", font_file) as font_path:
             font = ImageFont.truetype(font_path, self.font_size)
 
         text_bbox = draw.textbbox(
-            (0, 0), label_text, font=font, font_size=self.font_size
+            (0, 0), label_text, font=font, font_size=self.font_size, align="center"
         )
         text_width = text_bbox[2] - text_bbox[0]
         text_height = text_bbox[3] - text_bbox[1]
@@ -200,5 +208,7 @@ class Gif:
         shadow_coords = [coord + self.shadow_offset for coord in box_coords]
 
         draw.rectangle(shadow_coords, fill=(50, 50, 50, 128))
-        draw.rectangle(box_coords, fill=(255, 255, 255))
-        draw.text((x, y_centered), label_text, font=font, fill=(0, 0, 0))
+        draw.rectangle(box_coords, fill=self.box_color)
+        draw.text(
+            (x, y_centered - 10), label_text, font=font, fill=(0, 0, 0), align="center"
+        )

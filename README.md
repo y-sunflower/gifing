@@ -86,4 +86,4 @@ By default, the GIF will be saved as `./output.gif`. You can customize the outpu
 ## License
 
 - The source code in this repository is licensed under the [MIT License](./LICENSE).
-- The included fonts are licensed under the [SIL Open Font License, Version 1.1](./OFL.md).
+- The included fonts are licensed under the [SIL Open Font License, Version 1.1](https://openfontlicense.org).
