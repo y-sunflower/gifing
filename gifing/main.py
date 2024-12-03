@@ -81,7 +81,7 @@ class Gif:
         box_padding: int = 20,
         box_color: tuple = (255, 255, 255),
         shadow_offset: int = 10,
-        font: str = "Arial",
+        font: str = "Urbanist",
     ) -> None:
         """
         Set labels for specific frames in the GIF.
@@ -93,7 +93,7 @@ class Gif:
         - text_padding: text padding in pixels
         - box_padding: box padding in pixels
         - shadow_offset: offset of the box shadow
-        - font: the font for the labels (either "Arial" or "Urbanist")
+        - font: one of "Eatingpasta", "Urbanist", "Asterisk", "Faculty"
         """
         if loc not in ["top left", "top right", "bottom left", "bottom right"]:
             raise ValueError(
