@@ -9,9 +9,9 @@ A lightweight python tool for creating GIFs
 Let's make a GIF with these images:
 
 <p align="center">
-  <img src="tests/img/image2.jpg" width="25%" />
-  <img src="tests/img/image1.jpg" width="25%" />
-  <img src="tests/img/image3.jpg" width="25%" />
+  <img src="https://github.com/y-sunflower/gifing/blob/main/tests/img/image2.jpg?raw=true" width="25%" />
+  <img src="https://github.com/y-sunflower/gifing/blob/main/tests/img/image1.jpg?raw=true" width="25%" />
+  <img src="https://github.com/y-sunflower/gifing/blob/main/tests/img/image3.jpg?raw=true" width="25%" />
 </p>
 
 ```python
@@ -30,7 +30,7 @@ gif.set_size((900, 700), scale=1.2)
 gif.make("img/output.gif")
 ```
 
-![](img/output.gif)
+![](https://github.com/y-sunflower/gifing/blob/main/img/output.gif?raw=true)
 
 This package offers:
 
