@@ -9,3 +9,4 @@ sandbox.py
 !img/*.gif
 dist/
 doc.sh
+.venv/

@@ -1,4 +1,4 @@
-name: Ruff
+name: Check Code Formatting
 
 on:
   pull_request:
@@ -6,8 +6,23 @@ on:
       - main
 
 jobs:
-  ruff:
+  check-formatting:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
-      - uses: astral-sh/ruff-action@v1
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.13"
+
+      - name: Install Ruff
+        run: pip install ruff==0.9.10
+
+      - name: Run Ruff format check
+        run: ruff format --check .
+
+      - name: Run Ruff linting and auto-fix
+        run: ruff check --fix .
