@@ -1,7 +1,7 @@
 [project]
 name = "gifing"
 description = "A lightweight python tool for creating GIFs"
-version = "0.1.0"
+version = "0.1.1"
 license = "MIT"
 license-files = ["LICENSE"]
 keywords = ["GIF", "image"]
@@ -36,8 +36,6 @@ gifing = { workspace = true }
 dev = [
     "pre-commit>=4.2.0",
     "pytest>=8.3.5",
-    "mkdocs-material>=9.6.9",
-    "mkdocstrings-python>=1.16.5",
 ]
 
 [project.urls]

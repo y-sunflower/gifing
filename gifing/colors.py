@@ -1,6 +1,7 @@
 import re
+from typing import Tuple, Dict
 
-COLOR_MAP = {
+COLOR_MAP: Dict[str, Tuple[int]] = {
     "white": (255, 255, 255),
     "black": (0, 0, 0),
     "red": (255, 0, 0),

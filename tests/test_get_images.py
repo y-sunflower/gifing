@@ -1,10 +1,10 @@
 import os
 import pytest
-from gifing import Gif
+from gifing import GIF
 
 
 def test_get_images_before_make():
-    gif = Gif(
+    gif = GIF(
         file_path=[
             "tests/img/image1.jpg",
             "tests/img/image2.jpg",
@@ -19,7 +19,7 @@ def test_get_images_before_make():
 
 
 def test_get_images_after_make():
-    gif = Gif(
+    gif = GIF(
         file_path=[
             "tests/img/image1.jpg",
             "tests/img/image2.jpg",

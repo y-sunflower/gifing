@@ -1,4 +1,4 @@
-from .main import Gif
+from .main import GIF
 
-__version__ = "0.1.0"
-__all__ = ["Gif"]
+__version__ = "0.1.1"
+__all__ = ["GIF"]
