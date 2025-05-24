@@ -1,6 +1,6 @@
 # gifing
 
-> A lightweight python tool for creating GIFs
+A lightweight python tool for creating GIFs
 
 <br>
 

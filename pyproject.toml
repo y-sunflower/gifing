@@ -1,27 +1,47 @@
 [project]
 name = "gifing"
+description = "A lightweight python tool for creating GIFs"
 version = "0.1.0"
+license = "MIT"
+license-files = ["LICENSE"]
+keywords = ["GIF", "image"]
 authors = [
   { name="Joseph Barbier", email="joseph.barbierdarnal@gmail.com" },
 ]
-description = "A lightweight python tool for creating GIFs"
 readme = "README.md"
 requires-python = ">=3.9"
 classifiers = [
     "Programming Language :: Python :: 3",
-    "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
+    "Development Status :: 4 - Beta"
 ]
 dependencies = [
-  "imageio",
-  "numpy",
-  "Pillow"
+    "imageio>=2.37.0",
 ]
 
 [build-system]
-requires = ["setuptools>=61.0"]
+requires = [
+    "setuptools",
+    "setuptools-scm",
+]
 build-backend = "setuptools.build_meta"
 
+[tool.setuptools]
+packages = ["gifing"]
+
+[tool.uv.sources]
+gifing = { workspace = true }
+
+[dependency-groups]
+dev = [
+    "pre-commit>=4.2.0",
+    "pytest>=8.3.5",
+    "mkdocs-material>=9.6.9",
+    "mkdocstrings-python>=1.16.5",
+]
+
 [project.urls]
-Homepage = "https://github.com/JosephBARBIERDARNAL/gifing"
-Issues = "https://github.com/JosephBARBIERDARNAL/gifing/issues"
+Homepage = "https://y-sunflower.github.io/gifing/"
+Issues = "https://github.com/y-sunflower/gifing/issues"
+Documentation = "https://y-sunflower.github.io/gifing/"
+Repository = "https://github.com/y-sunflower/gifing"
