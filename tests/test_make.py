@@ -1,10 +1,10 @@
 import pytest
 import os
-from gifing import Gif
+from gifing import GIF
 
 
 def test_make_with_wrong_path_raises_warning():
-    gif = Gif(
+    gif = GIF(
         file_path=[
             "tests/img/image1.jpg",
             "tests/img/image2.jpg",
@@ -18,7 +18,7 @@ def test_make_with_wrong_path_raises_warning():
 
 
 def test_resizing_and_scaling():
-    gif = Gif(
+    gif = GIF(
         file_path=[
             "tests/img/image1.jpg",
             "tests/img/image2.jpg",

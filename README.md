@@ -11,27 +11,17 @@ A lightweight python tool for creating GIFs
 </p>
 
 ```python
-from gifing import Gif
+from gifing import GIF
 
 path = "tests/img"
 file_path = [f"{path}/image{i}.jpg" for i in range(1, 4)]
-gif = Gif(
+gif = GIF(
     file_path,
     frame_duration=800,
-    n_repeat_last_frame=3,
-)
-gif.set_labels(
-    ["print", "hello", "world"],
-    font_size=60,
-    loc="bottom left",
-    text_padding=40,
-    box_padding=20,
-    box_color="#fffcee",
-    shadow_offset=15,
-    font="Urbanist",
+    n_repeat_last_frame=3, # 3x800
 )
 gif.set_background_color("red")
-gif.set_size((900, 700), scale=1)
+gif.set_size((900, 700), scale=1.5) # (900x1.5, 700x1.5)
 gif.make("img/output.gif")
 ```
 
@@ -42,7 +32,6 @@ This package offers:
 - a streamlined approach to creating GIFs
 - automatic image resizing
 - ability to set a background color during resizing
-- frame-by-frame label customization
 
 It's a basic prototype of the functionality I envision for this tool. The API is still unstable.
 
@@ -60,13 +49,13 @@ pip install git+https://github.com/JosephBARBIERDARNAL/gifing.git
 
 ### Usage
 
-Import the `Gif` class and provide a list of image file paths:
+Import the `GIF` class and provide a list of image file paths:
 
 ```python
-from gifing import Gif
+from gifing import GIF
 
 path = "tests/img"
-gif = Gif(
+gif = GIF(
     [f"{path}/image{i}.jpg" for i in range(1, 4)],
     frame_duration=800,  # Duration per frame (in milliseconds)
     n_repeat_last_frame=3,  # Repeat last frame 3x longer
@@ -91,11 +80,10 @@ Finally, call the `make()` method to generate the GIF:
 gif.make()
 ```
 
-By default, the GIF will be saved as `./output.gif`. You can customize the output path by passing it as an argument to the `make()` method.
+By default, the GIF will be saved as `output.gif`. You can customize the output path by passing it as an argument to the `make()` method.
 
 <br><br>
 
 ## License
 
 - The source code in this repository is licensed under the [MIT License](./LICENSE).
-- The included fonts are licensed under the [SIL Open Font License, Version 1.1](https://openfontlicense.org).
