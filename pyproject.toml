@@ -36,8 +36,6 @@ gifing = { workspace = true }
 dev = [
     "pre-commit>=4.2.0",
     "pytest>=8.3.5",
-    "mkdocs-material>=9.6.9",
-    "mkdocstrings-python>=1.16.5",
 ]
 
 [project.urls]

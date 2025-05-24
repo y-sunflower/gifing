@@ -4,24 +4,29 @@ A lightweight python tool for creating GIFs
 
 <br>
 
+## Quick start
+
+Let's make a GIF with these images:
+
 <p align="center">
-  <img src="tests/img/image1.jpg" width="25%" />
   <img src="tests/img/image2.jpg" width="25%" />
+  <img src="tests/img/image1.jpg" width="25%" />
   <img src="tests/img/image3.jpg" width="25%" />
 </p>
 
 ```python
 from gifing import GIF
 
-path = "tests/img"
-file_path = [f"{path}/image{i}.jpg" for i in range(1, 4)]
+path = "tests/img/image"
+path_to_files = [f"{path}1.jpg", f"{path}2.jpg", f"{path}3.jpg",]
+
 gif = GIF(
-    file_path,
-    frame_duration=800,
-    n_repeat_last_frame=3, # 3x800
+  path_to_files,
+  frame_duration=500,      # in ms
+  n_repeat_last_frame=3,   # 500x3
 )
 gif.set_background_color("red")
-gif.set_size((900, 700), scale=1.5) # (900x1.5, 700x1.5)
+gif.set_size((900, 700), scale=1.2)
 gif.make("img/output.gif")
 ```
 
@@ -33,21 +38,21 @@ This package offers:
 - automatic image resizing
 - ability to set a background color during resizing
 
-It's a basic prototype of the functionality I envision for this tool. The API is still unstable.
+> It's a basic prototype of the functionality I envision for this tool. The API is still **unstable**.
 
 <br>
 
-### Installation
+## Installation
 
-Install directly via pip (requires Python >=3.10):
+Install directly via pip (requires Python >=3.9):
 
 ```bash
-pip install git+https://github.com/JosephBARBIERDARNAL/gifing.git
+pip install gifing
 ```
 
 <br><br>
 
-### Usage
+## Usage
 
 Import the `GIF` class and provide a list of image file paths:
 
@@ -71,19 +76,13 @@ gif.set_background_color("black")
 You can also set a custom size for your GIF. The `set_size` method allows you to specify a target size and scale factor:
 
 ```python
-gif.set_size((300, 800), scale=1)  # Set the size to (300, 800) with no scaling
+gif.set_size((300, 800), scale=2) # (600px, 1600px)
 ```
 
 Finally, call the `make()` method to generate the GIF:
 
 ```python
-gif.make()
+gif.make("path/to/output/file.gif")
 ```
 
-By default, the GIF will be saved as `output.gif`. You can customize the output path by passing it as an argument to the `make()` method.
-
-<br><br>
-
-## License
-
-- The source code in this repository is licensed under the [MIT License](./LICENSE).
+If not specified, by default, the GIF will be saved as `output.gif`.

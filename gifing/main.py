@@ -5,7 +5,7 @@ from PIL.Image import Resampling
 from typing import Union, Tuple, List
 import warnings
 
-from .utils.colors import _strcolor_to_rgb
+from .colors import _strcolor_to_rgb
 
 
 class GIF:
@@ -87,6 +87,7 @@ class GIF:
             self.output_path += ".gif"
 
         for i, filename in enumerate(self.file_path):
+            print(f"\u2714 Gifing: {filename}")
             with Image.open(filename) as img:
                 img = self._format_image(img)
                 img_array = np.array(img)

@@ -1,5 +1,5 @@
 import pytest
-from gifing.utils.colors import (
+from gifing.colors import (
     _is_hex_color,
     _is_named_color,
     _hex_to_rgb,
