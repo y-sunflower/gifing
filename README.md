@@ -1,6 +1,6 @@
 # gifing
 
-A lightweight python tool for creating GIFs
+A lightweight python tool for creating GIF
 
 <br>
 
@@ -34,7 +34,7 @@ gif.make("img/output.gif")
 
 This package offers:
 
-- a streamlined approach to creating GIFs
+- a streamlined approach to creating GIF
 - automatic image resizing
 - ability to set a background color during resizing
 

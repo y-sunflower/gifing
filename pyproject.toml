@@ -1,6 +1,6 @@
 [project]
 name = "gifing"
-description = "A lightweight python tool for creating GIFs"
+description = "A lightweight python tool for creating GIF"
 version = "0.1.1"
 license = "MIT"
 license-files = ["LICENSE"]
