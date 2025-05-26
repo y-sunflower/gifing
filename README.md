@@ -2,7 +2,11 @@
 
 <img src="https://github.com/JosephBARBIERDARNAL/static/blob/main/python-libs/gifing/image.png?raw=true" alt="pypalettes logo" align="right" width="160px"/>
 
-A super simple python tool for creating GIF!
+A super-simple python tool for creating GIFs!
+
+`gifing` offers a single `GIF()` class, which lets you create GIFs with images of different sizes (which is very handy), define a background colour and (of course) control the duration of the images.
+
+Let's see how it works!
 
 <br><br>
 
@@ -34,12 +38,6 @@ gif.make("img/output.gif")
 
 ![](https://github.com/y-sunflower/gifing/blob/main/img/output.gif?raw=true)
 
-This package offers:
-
-- a streamlined approach to creating GIF
-- automatic image resizing
-- ability to set a background color during resizing
-
 > It's a basic prototype of the functionality I envision for this tool. The API is still **unstable**.
 
 <br>
@@ -64,7 +62,7 @@ from gifing import GIF
 path = "tests/img"
 gif = GIF(
     [f"{path}/image{i}.jpg" for i in range(1, 4)],
-    frame_duration=800,  # Duration per frame (in milliseconds)
+    frame_duration=800,     # Duration per frame (in milliseconds)
     n_repeat_last_frame=3,  # Repeat last frame 3x longer
 )
 ```
@@ -72,7 +70,7 @@ gif = GIF(
 You can set a background color, which is useful if your images have varying sizes:
 
 ```python
-gif.set_background_color("black")
+gif.set_background_color("black") # hex, rgb, and most basic colors are valid
 ```
 
 You can also set a custom size for your GIF. The `set_size` method allows you to specify a target size and scale factor:
