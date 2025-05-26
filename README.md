@@ -4,7 +4,7 @@
 
 A super-simple python tool for creating GIFs!
 
-`gifing` offers a single `GIF()` class, which lets you create GIFs with images of different sizes (which is very handy), define a background colour and (of course) control the duration of the images.
+`gifing` offers a single `GIF()` class, which lets you create GIFs with images of different sizes (which is very handy), define a background color and (of course) control the duration of the images.
 
 <br><br>
 
@@ -26,11 +26,11 @@ path_to_files = [f"{path}1.jpg", f"{path}2.jpg", f"{path}3.jpg",]
 
 gif = GIF(
   path_to_files,
-  frame_duration=500,      # in ms
-  n_repeat_last_frame=3,   # 500x3
+  frame_duration=500,
+  n_repeat_last_frame=3,
 )
-gif.set_background_color("red")
-gif.set_size((900, 700), scale=1.2)
+gif.set_background_color("red")      # optional
+gif.set_size((900, 700), scale=1.2)  # optional
 gif.make("img/output.gif")
 ```
 
