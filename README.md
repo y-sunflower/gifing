@@ -1,8 +1,10 @@
 # gifing
 
-A lightweight python tool for creating GIF
+<img src="https://github.com/JosephBARBIERDARNAL/static/blob/main/python-libs/gifing/image.png?raw=true" alt="pypalettes logo" align="right" width="160px"/>
 
-<br>
+A super simple python tool for creating GIF!
+
+<br><br>
 
 ## Quick start
 
