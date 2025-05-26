@@ -6,8 +6,6 @@ A super-simple python tool for creating GIFs!
 
 `gifing` offers a single `GIF()` class, which lets you create GIFs with images of different sizes (which is very handy), define a background colour and (of course) control the duration of the images.
 
-Let's see how it works!
-
 <br><br>
 
 ## Quick start
